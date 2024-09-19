@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Lists from "./List";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+class App extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        loading: false,
+        alldata: [],
+        singledata: {
+          title: "",
+          author: ""
+        }
+      };
+    }
+    getLists = () => {
+      this.setState({ loading: true });
+      fetch("http://localhost:5001/posts")
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            alldata: data,
+            loading: false
+          });
+        })
+        .catch(console.log);
+    };
+    render() {
+      const listTable = this.state.loading ? (<span>Loading data...</span>) : (<Lists alldata={this.state.alldata} />);
+      return (
+          <div className="container">
+              <span className="title-bar">
+                  <button 
+                      type="button" 
+                      className="btn btn-primary"
+                      onClick={this.getLists}
+                  >
+                      Get Lists
+                  </button>
+              </span>
+              {listTable}
+          </div>
+      );
+  }
+  
+  }
 
 export default App;
